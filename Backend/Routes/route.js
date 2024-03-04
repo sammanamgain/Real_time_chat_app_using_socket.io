@@ -5,10 +5,14 @@ const {
   sendSpecificChat,
 } = require("../Controller/chat/chatapi.js");
 const { CheckUser } = require("../config/checkUser.js");
-const { signUp } = require("../Controller/user/usercontroller.js");
+const {
+  signUp,
+  successMessage,
+} = require("../Controller/user/usercontroller.js");
+
 
 router.route("/app/chat").get(sendAllChat);
 router.route("/app/chat/:id").get(sendSpecificChat);
 
-router.route("/app/signup").post(CheckUser, signUp);
+router.route("/app/signup").post(CheckUser, signUp, successMessage);
 module.exports = router;
