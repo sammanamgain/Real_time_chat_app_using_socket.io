@@ -1,13 +1,105 @@
 import { useState } from "react";
 
+import axios from "axios"
+import toast, { Toaster } from 'react-hot-toast';
 export default function SignUp() {
-  const [formData, setformdata] = useState({ email: "", password: "" });
-  const HandleChangeInform = (e) => {
-    setformdata({ ...formData, [e.target.id]: e.target.value });
-  };
+  const [formData, setformdata] = useState({name:"", email: "", password: "",pic:"" });
+  const [loading,setLoading]=useState(false)
+  const [success,setSuccess]=useState(false)
+  const [upload,setUpload]=useState(false)
 
-  const handleSubmit = (e) => {
+  const HandleChangeInform = (e) => {
+    console.log(e.target.id)
+    console.log(e.target.value)
+  //  let data={`${e.target.value}`}
+
+  setformdata({ ...formData, ...{[e.target.id]: e.target.value }});
+   
+  };
+  console.log(formData)
+  toast("successfully uploaded")
+
+
+const HandleImage=async(e)=>{
+
+    console.log("is it collected")
+    setLoading(true)
+
+    if( e.target.value===undefined){
+      prompt("please add image")
+    }
+    else
+    {
+
+      const data=new FormData()
+      data.append("file",e.target.files[0])
+      data.append("upload_preset","Chat_app_samman")
+      data.append("cloud_name","didy04lfa")
+      console.log(data)
+      await fetch("https://api.cloudinary.com/v1_1/didy04lfa/image/upload",{
+        method:'post',
+        body:data
+      }).then((res)=>res.json())
+      .then((data)=>{
+        setLoading(false)
+        let pic={'pic':data.url.toString()}
+        setformdata({...formData,...pic})
+        console.log(formData
+          )
+
+      }).catch((e)=>{
+        console.log(e)
+      })
+     
+    }
+    
+
+  }
+
+
+  const handleSubmit = async(e) => {
     e.preventDefault();
+    let data={"name":formData.name,"email":formData.email,"password":formData.password,"pic":formData.pic}
+
+    if(formData.pic==="")
+    {
+      setUpload(true)
+      toast("upload your image")
+    }
+
+      try {
+      console.log("calling api");
+      console.log(data)
+      await axios
+        .post("http://localhost:5000/app/signup", data)
+        .then((response) => {
+          console.log("no response");
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log("no error");
+          console.log(error);
+        });
+    } catch (e) {
+      console.log("error while sending post request", e);
+    }  try {
+      console.log("calling api");
+      await axios
+        .post("http://localhost:5000/app/log-in", {
+          email: "amgain1@gmail.com",
+          password: "samman",
+        })
+        .then((response) => {
+          console.log("no response");
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log("no error");
+          console.log(error);
+        });
+    } catch (e) {
+      console.log("error while sending post request", e);
+    }
   };
 
   return (
@@ -31,6 +123,21 @@ export default function SignUp() {
                 Sign Up to your account
               </h1>
               <form className='space-y-4 md:space-y-6' onSubmit={handleSubmit}>
+                  <div>
+                  <label className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
+                    Your Name
+                  </label>
+                  <input
+                    value={formData.name}
+                    type='text'
+                    name='name'
+                    id='name'
+                    className='bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                    placeholder='Your Name'
+                    required=''
+                    onChange={HandleChangeInform}
+                  />
+                </div>
                 <div>
                   <label className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
                     Your email
@@ -55,10 +162,24 @@ export default function SignUp() {
                     type='password'
                     name='password'
                     id='password'
-                    placeholder='••••••••'
+                    
                     className='bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
                     required=''
                     onChange={HandleChangeInform}
+                  />
+                </div>
+
+                  <div>
+                  <label className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
+                   {success ? "uploaded" : "Uplaod Your Image"} 
+                  </label>
+                  <input
+                    type='file'
+                    name='pic'
+                    id='pic'
+                    className='bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                    required=''
+                    onChange={HandleImage}
                   />
                 </div>
                 <div className='flex items-center justify-between'>
@@ -99,6 +220,35 @@ export default function SignUp() {
           </div>
         </div>
       </section>
+      {
+        success && (<Toaster
+          toastOptions={{
+    className: '',
+    style: {
+      background:'green',
+      border: '1px solid #713200',
+      padding: '16px',
+      color: '#713200',
+    },
+  }}>
+
+        </Toaster>)
+      }
+
+         {
+        upload && (<Toaster
+          toastOptions={{
+    className: '',
+    style: {
+      background:'red',
+      border: '1px solid #713200',
+      padding: '16px',
+      color: '#713200',
+    },
+  }}>
+
+        </Toaster>)
+      }
     </div>
   );
 }

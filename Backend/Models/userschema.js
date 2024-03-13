@@ -31,6 +31,7 @@ userSchema.methods.getJWTToken = function () {
   });
 };
 userSchema.methods.comparePassword = async function (input_password) {
+  console.log("is it called");
   return bcryptjs.compare(input_password, this.password);
 };
 const User = mongoose.model("User", userSchema);

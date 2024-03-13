@@ -1,5 +1,8 @@
 const User = require("../../Models/userschema.js");
-exports.signUp = async (req, res, next) => {
+const asyncHandler = require("express-async-handler");
+exports.signUp = asyncHandler(async (req, res, next) => {
+
+  console.log("sign up page received")
   try {
     if (req.user) {
       return next();
@@ -11,6 +14,7 @@ exports.signUp = async (req, res, next) => {
 
     res.status(201).cookie("jwt", jwt, { httpOnly: true }).json({
       success: true,
+
       message: user,
     });
   } catch (e) {
@@ -20,7 +24,7 @@ exports.signUp = async (req, res, next) => {
       extrainfo: "signup page issue",
     });
   }
-};
+});
 
 exports.successMessage = async (req, res, next) => {
   res.status(201).json({
@@ -28,3 +32,31 @@ exports.successMessage = async (req, res, next) => {
     message: "already logged in",
   });
 };
+exports.LogIn = asyncHandler(async (req, res, next) => {
+  try {
+    if (req.user) {
+      return next();
+    }
+
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+
+    if (await user.comparePassword(password)) {
+      res.status(200).json({
+        success: true,
+        message: " Logged in sucesssfully",
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+        message: "login failed",
+      });
+    }
+  } catch (e) {
+    res.status(404).json({
+      success: false,
+      message: e,
+      extrainfo: "Login page issue",
+    });
+  }
+});

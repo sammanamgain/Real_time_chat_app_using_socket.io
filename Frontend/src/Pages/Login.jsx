@@ -1,12 +1,32 @@
 import { useState } from "react";
+import axios from "axios";
 export default function Login() {
   const [formData, setformdata] = useState({ email: "", password: "" });
   const HandleChangeInform = (e) => {
     setformdata({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    try {
+      console.log("calling api");
+      await axios
+        .post("http://localhost:5000/app/log-in", {
+          email: "amgain1@gmail.com",
+          password: "samman",
+        })
+        .then((response) => {
+          console.log("no response");
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log("no error");
+          console.log(error);
+        });
+    } catch (e) {
+      console.log("error while sending post request", e);
+    }
   };
 
   return (
