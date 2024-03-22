@@ -2,7 +2,9 @@ import { useState } from "react";
 
 import axios from "axios"
 import toast, { Toaster } from 'react-hot-toast';
+import { useNavigate } from "react-router-dom";
 export default function SignUp() {
+  let Navigate=useNavigate();
   const [formData, setformdata] = useState({name:"", email: "", password: "",pic:"" });
   const [loading,setLoading]=useState(false)
   const [success,setSuccess]=useState(false)
@@ -76,6 +78,10 @@ const HandleImage=async(e)=>{
         .then((response) => {
           console.log("no response");
           console.log(response);
+          if(response.data.success)
+          {
+            Navigate("/")
+          }
         })
         .catch((error) => {
           console.log("no error");

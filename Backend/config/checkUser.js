@@ -1,5 +1,6 @@
 const jsonwt = require("jsonwebtoken");
 exports.CheckUser = async (req, res, next) => {
+  
   console.log("request received");
   try {
     if (req.cookies.jwt === undefined) {

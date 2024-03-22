@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
 export default function Login() {
+  let Navigate=useNavigate()
   const [formData, setformdata] = useState({ email: "", password: "" });
   const HandleChangeInform = (e) => {
     setformdata({ ...formData, [e.target.id]: e.target.value });
@@ -18,10 +21,14 @@ export default function Login() {
         })
         .then((response) => {
           console.log("no response");
-          console.log(response);
+          console.log(response.data.success);
+          if(response.data.success)
+          {
+            Navigate("/")
+          }
         })
         .catch((error) => {
-          console.log("no error");
+          console.log(" error");
           console.log(error);
         });
     } catch (e) {
