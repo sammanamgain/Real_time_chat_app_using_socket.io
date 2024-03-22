@@ -40,6 +40,7 @@ const HandleImage=async(e)=>{
         method:'post',
         body:data
       }).then((res)=>res.json())
+      
       .then((data)=>{
         setLoading(false)
         let pic={'pic':data.url.toString()}
