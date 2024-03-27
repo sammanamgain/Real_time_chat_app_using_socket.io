@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { isRouteErrorResponse, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { calcLength } from "framer-motion";
 
 export default function Login() {
   let Navigate=useNavigate()
@@ -20,11 +21,12 @@ export default function Login() {
           password: "samman",
         })
         .then((response) => {
-          console.log("no response");
-          console.log(response.data.success);
+          console.log(response.data.jwt);
+       
+          localStorage.setItem('userInfo', response.data.jwt);
           if(response.data.success)
           {
-            Navigate("/")
+            Navigate("/chat")
           }
         })
         .catch((error) => {

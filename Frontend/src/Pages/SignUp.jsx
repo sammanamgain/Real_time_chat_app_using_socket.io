@@ -76,11 +76,13 @@ const HandleImage=async(e)=>{
       await axios
         .post("http://localhost:5000/app/signup", data)
         .then((response) => {
+
+          localStorage.setItem('userInfo', response.data.jwt);
           console.log("no response");
           console.log(response);
           if(response.data.success)
           {
-            Navigate("/")
+            Navigate("/chat")
           }
         })
         .catch((error) => {
